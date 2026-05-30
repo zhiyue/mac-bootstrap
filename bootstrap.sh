@@ -69,7 +69,7 @@ for pkg in chezmoi git gh; do
   if brew list --versions "$pkg" >/dev/null 2>&1; then
     ok "$pkg present"
   else
-    log "brew install $pkg…"
+    log "brew install ${pkg}…"
     brew install "$pkg"
   fi
 done
@@ -77,7 +77,7 @@ cask=1password-cli
 if brew list --cask --versions "$cask" >/dev/null 2>&1; then
   ok "$cask present"
 else
-  log "brew install --cask $cask…"
+  log "brew install --cask ${cask}…"
   brew install --cask "$cask"
 fi
 
