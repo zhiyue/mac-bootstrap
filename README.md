@@ -17,13 +17,13 @@ Re-running is safe — each step is skipped if it is already present.
 Always read a script before piping it into your shell:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/main/bootstrap.sh | less
+curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/refs/heads/main/bootstrap.sh | less
 ```
 
 Then run it:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/main/bootstrap.sh | bash
+curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/refs/heads/main/bootstrap.sh | bash
 ```
 
 By default it installs the toolchain and then **stops**, printing the manual clone
@@ -32,7 +32,7 @@ By default it installs the toolchain and then **stops**, printing the manual clo
 `DEV_SETUP_REPO`:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/main/bootstrap.sh \
+curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/refs/heads/main/bootstrap.sh \
   | DEV_SETUP_REPO=https://github.com/zhiyue/mac-dotfiles.git bash
 ```
 
