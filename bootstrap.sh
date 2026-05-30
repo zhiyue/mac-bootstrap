@@ -89,7 +89,7 @@ $(ok "Toolchain ready.")  Repo not cloned (DEV_SETUP_REPO unset).
 Next — once the repo is hosted AND secrets are scrubbed (dotfiles/_capture/RESTORE.md §五):
   gh auth login                                  # or load an SSH key from 1Password
   git clone <your-dotfiles-repo> "$SOURCE"
-  chezmoi init --source "$SOURCE" && chezmoi apply -v
+  chezmoi --source "$SOURCE" apply -v
 Then finish per RESTORE.md: 1Password unlock · brew bundle Brewfile{,.fonts,.vscode} · ./install-tools.sh
 EOF
   exit 0
@@ -107,9 +107,8 @@ else
   ok "Repo already at $SOURCE"
 fi
 
-log "chezmoi init + apply (source: $SOURCE)…"
-chezmoi init --source "$SOURCE"
-chezmoi apply -v   # runs run_once_ scripts: prereqs-check → install-claude-code → skill-registry
+log "chezmoi apply (source: $SOURCE)…"
+chezmoi --source "$SOURCE" apply -v   # runs run_once_ scripts: prereqs-check → install-claude-code → skill-registry
 
 cat <<EOF
 

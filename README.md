@@ -28,7 +28,7 @@ curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/refs/heads/mai
 
 By default it installs the toolchain and then **stops**, printing the manual clone
 + chezmoi steps. To also clone your dotfiles repo into
-`~/workspace/dev-setup/mac-dotfiles` and run chezmoi automatically, set
+`~/workspace/dev-setup/mac-dotfiles` and apply it automatically, set
 `DEV_SETUP_REPO`:
 
 ```bash
