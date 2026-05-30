@@ -27,12 +27,13 @@ curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/main/bootstrap
 ```
 
 By default it installs the toolchain and then **stops**, printing the manual clone
-+ chezmoi steps. To also clone your dotfiles repo and run chezmoi automatically,
-set `DEV_SETUP_REPO`:
++ chezmoi steps. To also clone your dotfiles repo into
+`~/workspace/dev-setup/mac-dotfiles` and run chezmoi automatically, set
+`DEV_SETUP_REPO`:
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/main/bootstrap.sh \
-  | DEV_SETUP_REPO=git@github.com:zhiyue/<your-repo>.git bash
+  | DEV_SETUP_REPO=https://github.com/zhiyue/mac-dotfiles.git bash
 ```
 
 ## Environment overrides
@@ -40,4 +41,5 @@ curl -fsSL https://raw.githubusercontent.com/zhiyue/mac-bootstrap/main/bootstrap
 | Variable | Default | Meaning |
 |---|---|---|
 | `DEV_SETUP_REPO` | _(unset)_ | If set, clone this repo and run `chezmoi init` + `apply`. If unset, install the toolchain only. |
-| `DEV_SETUP_DIR` | `~/workspace/dev-setup` | Clone target directory. |
+| `DEV_SETUP_DIR` | `~/workspace/dev-setup` | Workspace root. |
+| `DEV_SETUP_SOURCE` | `$DEV_SETUP_DIR/mac-dotfiles` | Chezmoi source directory and clone target for `DEV_SETUP_REPO`. |
