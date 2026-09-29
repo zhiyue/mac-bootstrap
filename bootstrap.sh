@@ -1,19 +1,9 @@
 #!/usr/bin/env bash
-# bootstrap.sh — bare macOS → dev toolchain. The "stage 0" that RESTORE.md
-# assumes is already done (it starts at `brew install chezmoi`).
-# Installs, idempotently: Xcode CLT → Homebrew → chezmoi/git/gh/1password-cli.
-# Optionally (only if DEV_SETUP_REPO is set) clones the repo and runs chezmoi.
-#
-# Fresh Mac — once THIS file is hosted somewhere PUBLIC and secret-free
-# (e.g. a gist), and your dotfiles repo's secrets are scrubbed (RESTORE.md §五):
-#   curl -fsSL https://<host>/bootstrap.sh | bash
-# or just copy it over (AirDrop/USB) and:  bash bootstrap.sh
-#
-# Env overrides:
-#   DEV_SETUP_REPO    git URL to clone. If unset, the script installs the
-#                     toolchain and then prints the manual clone + chezmoi steps.
-#   DEV_SETUP_DIR     workspace root (default: ~/workspace/dev-setup)
-#   DEV_SETUP_SOURCE  chezmoi source dir (default: $DEV_SETUP_DIR/mac-dotfiles)
+# bootstrap.sh — bare macOS -> existing dotfiles setup.
+# Installs Xcode CLT, Homebrew, Git, gh, Python 3, age and 1Password CLI.
+# Cloning and setup remain opt-in through DEV_SETUP_REPO.
+# DEV_SETUP_DIR and DEV_SETUP_SOURCE select the checkout location.
+# DOTFILES_AGE_IDENTITY optionally supplies a local identity file to setup.sh.
 set -euo pipefail
 
 DEST="${DEV_SETUP_DIR:-$HOME/workspace/dev-setup}"
@@ -65,7 +55,7 @@ command -v brew >/dev/null 2>&1 || die "Homebrew not on PATH after install."
 ok "Homebrew $(brew --version | head -1 | awk '{print $2}')"
 
 # 3) Core toolchain ----------------------------------------------------------
-for pkg in chezmoi git gh; do
+for pkg in git gh python age; do
   if brew list --versions "$pkg" >/dev/null 2>&1; then
     ok "$pkg present"
   else
@@ -81,16 +71,16 @@ else
   brew install --cask "$cask"
 fi
 
-# 4) Optional: clone + chezmoi (only when DEV_SETUP_REPO is set) -------------
+# 4) Optional: clone + explicit setup (only when DEV_SETUP_REPO is set) ------
 if [[ -z "${DEV_SETUP_REPO:-}" ]]; then
   cat <<EOF
 
 $(ok "Toolchain ready.")  Repo not cloned (DEV_SETUP_REPO unset).
-Next — once the repo is hosted AND secrets are scrubbed (dotfiles/_capture/RESTORE.md §五):
+Next:
   gh auth login                                  # or load an SSH key from 1Password
   git clone <your-dotfiles-repo> "$SOURCE"
-  chezmoi --source "$SOURCE" apply -v
-Then finish per RESTORE.md: 1Password unlock · brew bundle Brewfile{,.fonts,.vscode} · ./install-tools.sh
+  ( cd "$SOURCE" && ./setup.sh --identity /path/to/local-identity )
+Then install the packages and tools described in the dotfiles README.
 EOF
   exit 0
 fi
@@ -107,12 +97,17 @@ else
   ok "Repo already at $SOURCE"
 fi
 
-log "chezmoi apply (source: $SOURCE)…"
-chezmoi --source "$SOURCE" apply -v   # runs run_once_ scripts: prereqs-check → install-claude-code → skill-registry
+[[ -f "$SOURCE/setup.sh" ]] || die "This checkout has no setup.sh. Use the migrated mac-dotfiles revision."
+log "Explicit dotfiles setup (source: $SOURCE)…"
+if [[ -n "${DOTFILES_AGE_IDENTITY:-}" ]]; then
+  bash "$SOURCE/setup.sh" --identity "$DOTFILES_AGE_IDENTITY"
+else
+  bash "$SOURCE/setup.sh"
+fi
 
 cat <<EOF
 
-$(ok "Core bootstrap done.")  Remaining manual steps (dotfiles/_capture/RESTORE.md):
+$(ok "Core bootstrap done.")  Remaining manual steps (see the dotfiles README):
   • 1Password: open the app, unlock, enable CLI  →  op account list
   • Packages:  brew bundle --file="$SOURCE/Brewfile"{,.fonts,.vscode}
   • Tools:     ( cd "$SOURCE" && ./install-tools.sh )
